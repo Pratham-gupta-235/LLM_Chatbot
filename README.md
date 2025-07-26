@@ -1,51 +1,109 @@
-# LLM Chatbot
+# RustyBot
 
-The LLM Chatbot example demonstrates how an ICP smart contract can be used to interact with a large language model (LLM) to generate text. The user can input a prompt, and the smart contract will use the LLM to generate a response.
-The response is then returned to the user, and the user can submit some follow-up prompts to continue the conversation.
+An open-source chatbot powered by a **large language model (LLM)**, deployed using an ICP (Internet Computer Protocol) smart contract. RustyBot supports natural language conversations and is designed to be extensible and privacy-centric.
 
-This application's logic is written in [Rust](https://internetcomputer.org/docs/building-apps/developer-tools/cdks/rust/intro-to-rust), a primary programming language for developing canisters on ICP.
+## Features
 
-## Deploying from ICP Ninja
+- **Smart contract backend**: Written in Rust, deployed as an ICP canister.
+- **Interactive LLM chatbot**: Uses locally served, open LLM (via Ollama) for prompt completion.
+- **Web-based frontend**: Built with React for a seamless, user-friendly interface.
+- **Secure and extensible**: Easily migrate between ICP Ninja deployments and local environments.
 
-When viewing this project in ICP Ninja, you can deploy it directly to the mainnet for free by clicking "Deploy" in the upper right corner. Open this project in ICP Ninja:
-
-[![](https://icp.ninja/assets/open.svg)](https://icp.ninja/i?url=https://github.com/dfinity/examples/rust/llm_chatbot)
-
-## Project structure
-
-The `/backend` folder contains the Rust smart contract:
-
-- `Cargo.toml`, which defines the crate that will form the backend
-- `lib.rs`, which contains the actual smart contract, and exports its interface
-
-The `/frontend` folder contains web assets for the application's user interface. The user interface is written using the React framework.
-
-## Continue building locally
-
-To migrate your ICP Ninja project off of the web browser and develop it locally, follow these steps.
-To open this project in ICP Ninja, click [here](https://icp.ninja/i?url=https://github.com/dfinity/examples/tree/master/rust/llm_chatbot).
-
-### 1. Download your project from ICP Ninja using the 'Download files' button on the upper left corner under the pink ninja star icon.
-
-### 2. Setting up Ollama
-
-To be able to test the agent locally, you'll need a server for processing the agent's prompts. For that, we'll use `ollama`, which is a tool that can download and serve LLMs.
-See the documentation on the [Ollama website](https://ollama.com/) to install it. Once it's installed, run:
+## Project Structure
 
 ```
-ollama serve
-# Expected to start listening on port 11434
+rustybot/
+├── backend/
+│   ├── Cargo.toml
+│   └── src/
+│       └── lib.rs    # Main Rust smart contract logic
+├── frontend/
+│   └── 
+├── README.md
 ```
 
-The above command will start the Ollama server, so that it can process requests by the agent. Additionally, and in a separate window, run the following command to download the LLM that will be used by the agent:
+- **backend/**: Rust-based ICP smart contract (canister).
+    - `Cargo.toml`: Project dependencies and crate info.
+    - `src/lib.rs`: Main smart contract logic and public interface.
+- **frontend/**: React code for the chatbot user interface.
 
+## Getting Started
+
+### 1. Quick Mainnet Deployment (via ICP Ninja)
+
+- Open the project in [ICP Ninja](https://icp.ninja).
+- Click **Deploy** (top-right) for one-click deployment to the Internet Computer mainnet.
+- (Optional) Use the built-in Remix-like editor for instant browser-side changes.
+
+### 2. Local Development & Running
+
+**Clone or Download:**
+- From ICP Ninja, press "Download files" (upper left menu) to get a zip of your project.
+
+**Backend:**
+
+- Make sure [Rust](https://rustup.rs/) and [dfx (DFINITY SDK)](https://smartcontracts.org/docs/quickstart/quickstart.html) are installed.
+
+```bash
+cd backend
+dfx start --background
+dfx deploy
 ```
-ollama run llama3.1:8b
+
+**Frontend:**
+
+- Requires [Node.js](https://nodejs.org/) and npm.
+
+```bash
+cd frontend
+npm install
+npm start
 ```
 
-The above command will download an 8B parameter model, which is around 4GiB. Once the command executes and the model is loaded, you can terminate it. You won't need to do this step again.
+**Running Local LLM Service (Ollama):**
 
-### 3. Open the `BUILD.md` file for further instructions.
-# ICP_LLMChatbot
-# ICP_LLMChatbot
-# LLM_Chatbot
+1. **Install [Ollama](https://ollama.com/):**
+2. Start the Ollama server:
+
+    ```bash
+    ollama serve
+    # Starts on localhost:11434
+    ```
+
+3. In a new terminal, pull and prepare the LLM:
+
+    ```bash
+    ollama run llama3.1:8b
+    # Downloads the 8B Llama model (~4GiB)
+    ```
+
+## Usage
+
+- Open your browser at [http://localhost:3000](http://localhost:3000).
+- Type a prompt in the chat window and get a response!
+- For mainnet: Use the auto-generated ICP Ninja frontend link after deployment.
+
+## Architecture & Flow
+
+1. **Frontend** (React): Presents the user chat interface and sends prompt requests.
+2. **ICP Canister** (Rust): Receives prompts from frontend, forwards them to the local LLM service, and returns responses.
+3. **Ollama LLM Service**: Locally processes prompts using the specified Llama model.
+
+> **Sequence:**  
+> User → Frontend → (HTTP/ICP call) → Canister → (API) → Ollama LLM → Canister → Frontend
+
+## Troubleshooting
+
+- **LLM not responding**: Ensure `ollama serve` is running and the model (`llama3.1:8b`) is downloaded.
+- **ICP deployment issues**: Double-check canister status with `dfx canister status`.
+- **Frontend errors**: Confirm all dependencies are installed; run `npm install`.
+
+## License
+
+[MIT License](LICENSE)
+
+## Acknowledgments
+
+- [ICP Ninja](https://icp.ninja) for deployment/hosting.
+- [Ollama](https://ollama.com) for the local LLM service.
+- [DFINITY](https://dfinity.org/) for the Internet Computer infrastructure.
